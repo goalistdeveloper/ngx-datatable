@@ -304,6 +304,35 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     }
   }
 
+  @HostListener('keyup', ['$event'])
+  onKeyUp(event: KeyboardEvent): void {
+    const keyCode = event.keyCode;
+    const isTargetCell = event.target === this._element;
+
+    const isAction =
+      keyCode === Keys.return ||
+      keyCode === Keys.down ||
+      keyCode === Keys.up ||
+      keyCode === Keys.left ||
+      keyCode === Keys.right;
+
+    if (isAction && isTargetCell) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.activate.emit({
+        type: 'keyup',
+        event,
+        row: this.row,
+        group: this.group,
+        rowHeight: this.rowHeight,
+        column: this.column,
+        value: this.value,
+        cellElement: this._element
+      });
+    }
+  }
+
   onCheckboxChange(event: any): void {
     this.activate.emit({
       type: 'checkbox',
